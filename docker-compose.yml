@@ -6,9 +6,9 @@ services:
     container_name: Train
     # Mapear os diretórios de saída para persistência no host
     volumes:
+      - /mnt/dockervolumes/volumes/cnn_test/input_data
       - /mnt/dockervolumes/volumes/cnn_test/processed_data:/app/processed_data
       - /mnt/dockervolumes/volumes/cnn_test/model_outputs:/app/model_outputs
-      - /mnt/dockervolumes/volumes/cnn_test/env:/app/env
     # Permitir acesso à GPU
     deploy:
       resources:
@@ -25,9 +25,9 @@ services:
     container_name: Inference
     # Mapear os mesmos diretórios para acessar os dados do treino
     volumes:
+      - /mnt/dockervolumes/volumes/cnn_test/input_data
       - /mnt/dockervolumes/volumes/cnn_test/processed_data:/app/processed_data
       - /mnt/dockervolumes/volumes/cnn_test/model_outputs:/app/model_outputs
-      - /mnt/dockervolumes/volumes/cnn_test/env:/app/env
       - /mnt/dockervolumes/volumes/cnn_test/resultados_previsoes_por_seed_CNN:/app/resultados_previsoes_por_seed_CNN
     # Permitir acesso à GPU
     deploy:
