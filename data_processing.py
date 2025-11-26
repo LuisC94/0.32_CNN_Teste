@@ -177,7 +177,7 @@ def create_product_graph_no_store_2(
     corr_matrix = df_values.corr(method='spearman')
     corr_matrix_upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
     high_corr_series = corr_matrix_upper.stack()
-    high_corr_pairs = high_corr_series[high_corr_series > 0.32]
+    high_corr_pairs = high_corr_series[high_corr_series > 0.30]
 
     for (prod_id_i, prod_id_j), correlation in high_corr_pairs.items():
         edges.append((prod_id_i, prod_id_j, {'weight': correlation, 'reason': 'high_correlation', 'correlation': correlation}))
