@@ -616,7 +616,7 @@ def main():
 
     non_zero_df = data_complete[data_complete['value'] != 0]
     non_zero_day_counts = non_zero_df.groupby('item_id')['day'].nunique()
-    ids_to_keep = non_zero_day_counts[non_zero_day_counts >= 500].index
+    ids_to_keep = non_zero_day_counts[non_zero_day_counts >= 600].index
     data_complete = data_complete[data_complete['item_id'].isin(ids_to_keep)]
     data_complete.reset_index(drop=True, inplace=True)
     data_complete.drop(columns=['promo_value', 'promo_type'], inplace=True)
