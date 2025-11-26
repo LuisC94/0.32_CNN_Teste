@@ -1,0 +1,63 @@
+
+# Source Data
+
+ANOM_SOURCE_DIR = ../data/source/m5
+
+ANOM_DATAFILES_DIR =  ../data/source/anonymous/data_files
+
+ANOM_DIMENSIONS_DIR = ../data/source/anonymous/dimensions
+
+M5_SOURCE_DIR = ../data/source/m5
+
+
+# Analysis Data
+
+ANOM_ANALYSIS_DIR = ../data/analysis/anonymous
+
+M5_ANALYSIS_DIR = ../data/analysis/m5
+
+
+# Processed Data
+
+ANOM_PROCESSED_DIR = ../data/processed/anonymous
+
+M5_PROCESSED_DIR = ../data/processed/m5
+
+
+# Analysis and Inference Data
+
+ANALYSIS_DATA_DIR = ../data/dash_files/analysis
+
+INFERENCE_DATA_DIR = ../data/dash_files/inference
+
+TEST_DATA_DIR = ../data/dash_files/test_ANA
+
+
+# Models
+
+MODELS_REPOSITORY = ../model-repo
+
+
+# MLFlow
+
+MLFLOW_TRACKING_URI = "file:///C:/Users/ana.loureiro/OneDrive - Retail Consult\Desktop/mlflow_track3"
+
+
+# Dashboards
+
+DASH_EXPORT_DIR = dashboards/training/export
+
+# Databases
+
+DB_NAME = aisupplydb
+
+DB_HOST = 10.197.48.174
+
+DB_PORT = 5432
+
+DB_USER = aisupplyuser
+
+DB_PASSWORD = "LQA+]BN!]EMhg(y[KJ"
+
+# Database schema info json
+JSON_PATH = ../src/data_ingestion/database_connection/db_settings.json

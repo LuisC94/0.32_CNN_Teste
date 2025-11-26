@@ -1,0 +1,16 @@
+# Use a mesma imagem base para consistência
+FROM pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime
+
+# Definir o diretório de trabalho
+WORKDIR /app
+
+# Copiar os requisitos e instalar as dependências
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar o script de teste
+COPY test.py .
+COPY env .
+
+# Comando para executar o script de teste
+CMD ["python", "test.py"]

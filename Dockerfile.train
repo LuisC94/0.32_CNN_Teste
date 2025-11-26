@@ -1,0 +1,23 @@
+# Use uma imagem base do PyTorch com suporte a CUDA
+FROM pytorch/pytorch:2.7.1-cuda12.6-cudnn9-runtime
+
+# Definir o diretório de trabalho
+WORKDIR /app
+
+# Copiar os requisitos e instalar as dependências
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar os scripts do pipeline e o ficheiro de ambiente
+COPY data_processing.py .
+COPY train.py .
+COPY env .
+
+# Copiar scripts de inicialização (ver Passo 3)
+COPY run_train.sh .
+
+# Dar permissões de execução ao script
+RUN chmod +x run_train.sh
+
+# Comando para executar o container
+CMD ["./run_train.sh"]
