@@ -639,26 +639,7 @@ def create_val_from_train_silent(df_train, val_days):
 
 def main():
     
-    db_handler = DatabaseHandler()
-
-    # --- 1. Carregar dados da base de dados ---
-    SQL_main = """
-    SELECT
-        ps.unique_id,
-        ps."day",
-        ps.item_id,
-        ps.store_id,
-        ps.value,
-        ip.promo_value,
-        ip.promo_type
-    FROM anonymous.product_sales ps
-    LEFT JOIN anonymous.item_promos ip
-        ON ps.day = ip.day
-        AND ps.store_id = ip.store_id
-        AND ps.item_id = ip.item_id
-    WHERE ps.store_id = 6269;
-    """
-    data = db_handler.run_read_query(query_temp=SQL_main)
+    data = pd.read_csv('input_data/df.csv')
 
     logger.info(data.columns)
 
