@@ -28,7 +28,7 @@ services:
       - /mnt/dockervolumes/volumes/cnn_test/input_data:/app/input_data
       - /mnt/dockervolumes/volumes/cnn_test/processed_data:/app/processed_data
       - /mnt/dockervolumes/volumes/cnn_test/model_outputs:/app/model_outputs
-      - /mnt/dockervolumes/volumes/cnn_test/resultados_previsoes_por_seed_CNN:/app/resultados_previsoes_por_seed_CNN
+      - /mnt/dockervolumes/volumes/cnn_test/resultados_previsao:/app/resultados_previsao
     # Permitir acesso à GPU
     deploy:
       resources:
