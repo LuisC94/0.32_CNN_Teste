@@ -415,7 +415,7 @@ def main():
     # === 1. CARREGAR OS DADOS E OBJETOS NECESSÁRIOS ===
     processed_data_dir = "processed_data"
     model_outputs_dir = "model_outputs"
-    output_results_directory = 'resultados_previsoes_por_seed_CNN'
+    output_results_directory = 'resultados_previsao'
     model_name_for_excel = "CNN With Graph And Attention Mechanisms"
     store_id = 6269
     
@@ -452,29 +452,11 @@ def main():
     # === 2. INICIALIZAR PARÂMETROS E PREPARAR DADOS ===
     sequence_length = 7
     model_features = [
-        'value',
-        'is_weekend',
-        'day_of_week',
-        'month',
-        'day_of_month',
-        'is_close_depois_amanha',
-        'is_close_Amanha',
-        'is_close_25dez',
-        'is_holiday',
-        'dist_to_holiday',
-        'log_dist_to_holiday',
-        'dist_to_christmas',
-        'log_dist_to_christmas',
-        'dist_to_school_break',
-        'log_dist_to_school_break',
-        #'value_lag_1',
-        #'value_lag_2',
-        #'value_lag_3',
-        #'value_lag_4',
-        #'value_lag_5',
-        #'value_lag_6',
-        #'value_lag_7',
-        'Natal_Log_Dist'
+        'value', 'is_weekend', 'day_of_week', 'month', 'day_of_month', 'is_close_depois_amanha',
+        'is_close_Amanha', 'is_close_25dez', 'is_holiday', 'dist_to_holiday', 'log_dist_to_holiday',
+        'dist_to_christmas', 'log_dist_to_christmas', 'dist_to_school_break',
+        'log_dist_to_school_break', 'value_lag_1', 'value_lag_2', 'value_lag_3',
+        'value_lag_4', 'value_lag_5', 'value_lag_6', 'value_lag_7', 'Natal_Log_Dist'
     ]
     num_channels = len(model_features)
     num_products = len(product_ids)

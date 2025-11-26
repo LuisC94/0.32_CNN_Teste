@@ -170,7 +170,7 @@ class MultiProductCNN_with_Attention_and_GAT(nn.Module):
         output = self.multi_output(x)
         return output
     
-def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=20, patience=5, seed=None):
+def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=500, patience=5, seed=None):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
     
@@ -260,31 +260,12 @@ def main():
     sequence_length = 7
     
     model_features = [
-        'value',
-        'is_weekend',
-        'day_of_week',
-        'month',
-        'day_of_month',
-        'is_close_depois_amanha',
-        'is_close_Amanha',
-        'is_close_25dez',
-        'is_holiday',
-        'dist_to_holiday',
-        'log_dist_to_holiday',
-        'dist_to_christmas',
-        'log_dist_to_christmas',
-        'dist_to_school_break',
-        'log_dist_to_school_break',
-        #'value_lag_1',
-        #'value_lag_2',
-        #'value_lag_3',
-        #'value_lag_4',
-        #'value_lag_5',
-        #'value_lag_6',
-        #'value_lag_7',
-        'Natal_Log_Dist'
+        'value', 'is_weekend', 'day_of_week', 'month', 'day_of_month', 'is_close_depois_amanha',
+        'is_close_Amanha', 'is_close_25dez', 'is_holiday', 'dist_to_holiday', 'log_dist_to_holiday',
+        'dist_to_christmas', 'log_dist_to_christmas', 'dist_to_school_break',
+        'log_dist_to_school_break', 'value_lag_1', 'value_lag_2', 'value_lag_3',
+        'value_lag_4', 'value_lag_5', 'value_lag_6', 'value_lag_7', 'Natal_Log_Dist'
     ]
-    
     num_channels = len(model_features)
     value_feature_idx = model_features.index('value')
 

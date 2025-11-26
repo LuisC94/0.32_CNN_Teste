@@ -33,39 +33,6 @@ warnings.filterwarnings("ignore")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 logger.info(f"Usando dispositivo: {device}")
 
-# Load data
-load_dotenv("env")  
-
-db_user = os.getenv("DB_USER")
-db_password = os.getenv("DB_PASSWORD")
-db_host = os.getenv("DB_HOST")
-db_name = os.getenv("DB_NAME")
-db_port = os.getenv("DB_PORT", "5432")  
-
-DATABASE_URL = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
-
-engine = create_engine(DATABASE_URL)
-
-class DatabaseHandler:
-    
-    def __init__(self) -> None:
-        self.conn = self.start_connection()
-        self.metadata = MetaData()
-    
-    def start_connection(self):
-        return create_engine(
-            DATABASE_URL
-        )
-        
-    def close_connection(self):
-        self.conn.dispose()
-    
-    def run_read_query(self, query_temp: str, params: dict={}):
-        with self.conn.connect() as connection:
-            query = text(query_temp)
-            result = connection.execute(query, params)
-            return pd.DataFrame(result.fetchall(), columns=result.keys())
-
 def fill_missing_days(df, start_date='2021-01-23', end_date='2023-02-22'):
     """
     Preenche dias em falta entre start_date e end_date para cada produto
@@ -210,7 +177,7 @@ def create_product_graph_no_store_2(
     corr_matrix = df_values.corr(method='spearman')
     corr_matrix_upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
     high_corr_series = corr_matrix_upper.stack()
-    high_corr_pairs = high_corr_series[high_corr_series > 0.32]
+    high_corr_pairs = high_corr_series[high_corr_series > 0.38]
 
     for (prod_id_i, prod_id_j), correlation in high_corr_pairs.items():
         edges.append((prod_id_i, prod_id_j, {'weight': correlation, 'reason': 'high_correlation', 'correlation': correlation}))
@@ -638,7 +605,7 @@ def create_val_from_train_silent(df_train, val_days):
     return df_train_adjusted, df_val
 
 def main():
-    
+        
     data = pd.read_csv('input_data/df.csv')
 
     logger.info(data.columns)
@@ -649,7 +616,7 @@ def main():
 
     non_zero_df = data_complete[data_complete['value'] != 0]
     non_zero_day_counts = non_zero_df.groupby('item_id')['day'].nunique()
-    ids_to_keep = non_zero_day_counts[non_zero_day_counts >= 600].index
+    ids_to_keep = non_zero_day_counts[non_zero_day_counts >= 500].index
     data_complete = data_complete[data_complete['item_id'].isin(ids_to_keep)]
     data_complete.reset_index(drop=True, inplace=True)
     data_complete.drop(columns=['promo_value', 'promo_type'], inplace=True)
