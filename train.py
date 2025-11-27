@@ -182,7 +182,7 @@ def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge
     X_val_t = torch.FloatTensor(X_val).to(device)
     y_val_t = torch.FloatTensor(y_val).to(device)
     
-    batch_size = 256
+    batch_size = 128
     train_loader = torch.utils.data.DataLoader(
         torch.utils.data.TensorDataset(X_train_t, y_train_t), 
         batch_size=batch_size, 
