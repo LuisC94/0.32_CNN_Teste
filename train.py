@@ -170,8 +170,8 @@ class MultiProductCNN_with_Attention_and_GAT(nn.Module):
         output = self.multi_output(x)
         return output
 
-COMPUTATION_BATCH_SIZE = 256
-NUM_BATCHES_PER_CHUNK = 1
+COMPUTATION_BATCH_SIZE = 32
+NUM_BATCHES_PER_CHUNK = 8
 CHUNK_SIZE = COMPUTATION_BATCH_SIZE * NUM_BATCHES_PER_CHUNK 
 
 def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=500, patience=5, seed=None):
