@@ -241,8 +241,8 @@ def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge
             
             avg_train_loss = total_loss / batch_count if batch_count > 0 else 0
             
-            # CORREÇÃO: Usar print() em vez de logger.info() para compatibilidade
-            print(f'Epoch {epoch}: Train Loss = {avg_train_loss:.4f}, Val Loss = {val_loss:.4f}')
+            # CORREÇÃO: Usar logger.info() em vez de logger.info() para compatibilidade
+            logger.info(f'Epoch {epoch}: Train Loss = {avg_train_loss:.4f}, Val Loss = {val_loss:.4f}')
             
             if val_loss < best_loss:
                 best_loss = val_loss
@@ -252,12 +252,12 @@ def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge
                 model_filename = f"model_outputs/1_Graph_CNN_seed_{seed}.pth"
                 # Assumindo que os.makedirs está definido no escopo de chamada
                 torch.save(model.state_dict(), model_filename) 
-                print(f"Modelo salvo para a seed {seed}")
+                logger.info(f"Modelo salvo para a seed {seed}")
             else:
                 patience_counter += 1
                 
             if patience_counter >= patience:
-                print(f'Early stopping at epoch {epoch}')
+                logger.info(f'Early stopping at epoch {epoch}')
                 break
                 
     return model
