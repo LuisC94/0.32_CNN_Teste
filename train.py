@@ -170,7 +170,7 @@ class MultiProductCNN_with_Attention_and_GAT(nn.Module):
         output = self.multi_output(x)
         return output
 
-def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=20, patience=5, seed=None):
+def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=500, patience=5, seed=None):
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
     
