@@ -170,39 +170,69 @@ class MultiProductCNN_with_Attention_and_GAT(nn.Module):
         output = self.multi_output(x)
         return output
 
-def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=20, patience=5, seed=None):
+COMPUTATION_BATCH_SIZE = 32
+NUM_BATCHES_PER_CHUNK = 8
+CHUNK_SIZE = COMPUTATION_BATCH_SIZE * NUM_BATCHES_PER_CHUNK 
+
+def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=500, patience=5, seed=None):
+    
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
     
     best_loss = float('inf')
     patience_counter = 0
     
-    X_train_t = torch.FloatTensor(X_train).to(device)
-    y_train_t = torch.FloatTensor(y_train).to(device)
+    # 1. Carregar Treino/Target para a RAM (CPU) para a estratégia de chunking
+    X_train_t = torch.FloatTensor(X_train)
+    y_train_t = torch.FloatTensor(y_train)
+    
+    # 2. Carregar Validação para a VRAM (GPU) e o Grafo uma única vez
     X_val_t = torch.FloatTensor(X_val).to(device)
     y_val_t = torch.FloatTensor(y_val).to(device)
+    edge_index = edge_index.to(device)
     
-    batch_size = 256
-    train_loader = torch.utils.data.DataLoader(
-        torch.utils.data.TensorDataset(X_train_t, y_train_t), 
-        batch_size=batch_size, 
-        shuffle=True
-    )
-
+    num_samples = X_train_t.size(0)
+    
     for epoch in range(epochs):
         model.train()
         total_loss = 0
         batch_count = 0
         
-        for batch_X, batch_y in train_loader:
-            optimizer.zero_grad()
-            outputs = model(batch_X, edge_index) 
-            loss = criterion(outputs, batch_y)
-            loss.backward()
-            optimizer.step()
-            total_loss += loss.item()
-            batch_count += 1
-        
+        # 3. Gerar permutações para embaralhar os dados a nível de amostra
+        indices = torch.randperm(num_samples)
+
+        # 4. Loop Externo: Itera em CHUNKS (fatias) de 2560 amostras
+        for i in range(0, num_samples, CHUNK_SIZE):
+            chunk_indices = indices[i : i + CHUNK_SIZE]
+            
+            chunk_X = X_train_t[chunk_indices].to(device, non_blocking=True)
+            chunk_y = y_train_t[chunk_indices].to(device, non_blocking=True)
+
+            # B. Criar DataLoader INTERNO para o Chunk na VRAM
+            chunk_dataset = TensorDataset(chunk_X, chunk_y)
+            chunk_loader = DataLoader(
+                chunk_dataset, 
+                batch_size=COMPUTATION_BATCH_SIZE, 
+                shuffle=True, 
+            )
+
+            # 5. Loop Interno: Processa batches de 256 do CHUNK que está na VRAM
+            for batch_X, batch_y in chunk_loader:
+                
+                optimizer.zero_grad()
+                outputs = model(batch_X, edge_index) 
+                loss = criterion(outputs, batch_y)
+                loss.backward()
+                optimizer.step()
+                
+                total_loss += loss.item()
+                batch_count += 1
+            
+            # C. Limpeza da VRAM para o próximo chunk
+            del chunk_X, chunk_y, chunk_dataset, chunk_loader 
+            if device.type == 'cuda':
+                torch.cuda.empty_cache()
+
         if epoch % 10 == 0:
             model.eval()
             with torch.no_grad():
@@ -210,6 +240,8 @@ def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge
                 val_loss = criterion(val_outputs, y_val_t).item()
             
             avg_train_loss = total_loss / batch_count if batch_count > 0 else 0
+            
+            # CORREÇÃO: Usar logger.info() em vez de logger.info() para compatibilidade
             logger.info(f'Epoch {epoch}: Train Loss = {avg_train_loss:.4f}, Val Loss = {val_loss:.4f}')
             
             if val_loss < best_loss:
@@ -218,6 +250,7 @@ def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge
                 
                 # Salvar o modelo com um nome de ficheiro único para cada seed
                 model_filename = f"model_outputs/1_Graph_CNN_seed_{seed}.pth"
+                # Assumindo que os.makedirs está definido no escopo de chamada
                 torch.save(model.state_dict(), model_filename) 
                 logger.info(f"Modelo salvo para a seed {seed}")
             else:
@@ -226,6 +259,7 @@ def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge
             if patience_counter >= patience:
                 logger.info(f'Early stopping at epoch {epoch}')
                 break
+                
     return model
 
 def create_sequences(matrix, seq_len, val_idx):
