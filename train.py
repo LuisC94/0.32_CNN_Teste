@@ -175,7 +175,6 @@ NUM_BATCHES_PER_CHUNK = 1
 CHUNK_SIZE = COMPUTATION_BATCH_SIZE * NUM_BATCHES_PER_CHUNK 
 
 def train_multitask_model_with_graph(model, X_train, y_train, X_val, y_val, edge_index, epochs=500, patience=5, seed=None):
-    global device
     
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
